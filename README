@@ -1,0 +1,32 @@
+How to build:
+	Prerequisites:
+	The LLVM pass is built with clang 4.0 and gcc 7.1.0
+	Also note that LLVM has a habit of breaking backwards compatibility -- later or older versions of clang most likely will not work
+	If you run into any problems, make sure you are using these exact versions of clang and gcc.
+	A precompiled version of the pass is available under build/libllamapass.so
+	Several precompiled versions of the library with thresholds already set are available in library/ 
+
+	To build the llvm pass, simply do the following:
+		1. Go to the llvm directory
+		2. Run ./build.sh 
+	To build the library, simply do the following:
+		1. Go to the library directory
+		2. Run make
+		3. Run cp build/llama.a .  
+
+	To build the benchmarks, simply do the following:
+		For the two simple benchmarks (Matrix Multiplication and Memory Allocator), run ./build in their folders.
+		For the DoD benchmarks (XSBench and SimpleMOC), cd to their source directories and type "make". The Makefile available here has been modified to build with the LLVM pass and library.
+
+
+How to run and reproduce results: 
+	Note: The ariel element requires Intel PIN 2.14, which is incompatible with newer kernels. If, in running the benchmarks,
+	it crashes, try adding the "-ifeellucky" flag to the SST script.
+	Also note that the "-ifeellucky" flag may not save you in some cases -- both XSBench and SimpleMOC-Kernel segfaulted (signal 11) 
+	when the flag was thrown, but did not segfault on a system with the proper earlier kernel.
+
+
+	For each executable you want to run, run: sst DUAL_NVM.py executable
+
+	Note that some benchmarks might take more than an hour to complete. 
+
