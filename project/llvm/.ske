@@ -1,0 +1,111 @@
+/*  Author: Derrick Greenspan */
+/*  (C) 2018  All rights Reserved */
+
+#include "llvm/Pass.h"
+#include "llvm/IR/Function.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/Transforms/IPO/PassManagerBuilder.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/InstrTypes.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
+#include "llvm/Analysis/MemoryLocation.h"
+using namespace llvm;
+
+namespace {
+  struct SkeletonPass : public FunctionPass {
+    static char ID;
+    SkeletonPass() : FunctionPass(ID) {}
+
+    virtual bool runOnFunction(Function &F) {
+	    /*  If the function names are either ariel_flushline or ariel_fence,
+	     *  don't do anything. This avoids an infinite recursive loop */
+
+	    if(F.getName() == "ariel_flushline" ||
+			    F.getName() == "ariel_fence")
+	    {
+		    errs() << "ignoring ariel_flushline and ariel_fence\n";
+		    return false;
+	    }
+	    LLVMContext &context = F.getContext();
+
+	    /*****************************************
+	     *  get flush parameter type  *
+	     *****************************************/
+
+	    /*  ariel_flushline */
+	    //std::vector<Type*> flush_parameter_types = {Type::getPointerElementType()};
+
+	    /******************************************************
+	     *  Create functions ariel_fence and ariel_flushline  *
+	     ******************************************************/
+
+	    /*  ariel_flushline */
+	    /*  ret: void, arg1: pointer [why int?] */
+	    auto *ariel_flushline = F.getParent()->getOrInsertFunction("ariel_flushline", Type::getVoidTy(context),
+			    Type::getInt8PtrTy(context), NULL); /*  Int8PtrTy is a pointer type */
+
+	    /*  ariel_fence  */
+	    auto *ariel_fence = F.getParent()->getOrInsertFunction("ariel_fence", Type::getVoidTy(context),
+			    Type::getVoidTy(context), NULL);
+
+
+      for (auto &B : F) 
+      {
+	      bool isCalled = false;
+	        for (auto &I : B) 
+		{
+			auto op = &I;
+			if(op->mayWriteToMemory() && 
+					!(strcmp(op->getOpcodeName(), "call") == 0)
+					)
+			{
+				MemoryLocation addr;
+				/*  This gets the referenced memory location for writes */
+				addr = MemoryLocation::get(op);
+				errs() << "\nThe following instruction will have an ariel_fence() and ariel_flushline() after it:";
+				op->print(errs());
+				errs () << "\nThe virtual memory address to be passed will be:";
+				errs() << addr.Ptr;
+				errs() << "\n\n";
+
+				/*  create non-const form of ptr
+				    args_flush values demand a non-const to work properly */
+				llvm::Value *virtual_address; 
+				virtual_address = const_cast<llvm::Value*>(addr.Ptr);
+				IRBuilder<> builder(op);
+				builder.SetInsertPoint(&B, ++builder.GetInsertPoint());
+
+				/*  Insert function calls */
+				Value *args_flush[] = {op, virtual_address};
+				Value *args_fence[] = {op};
+
+				/*  To do: vary the ratio of flushes to fences 
+				 *  by stdin arguments */
+
+				/*  call ariel_flushline */
+				builder.CreateCall(ariel_flushline, args_flush);
+
+				/*  call ariel_fence */
+				builder.CreateCall(ariel_fence, args_fence);
+			}
+      		}
+      }
+      	return true;
+
+}
+};
+}
+
+char SkeletonPass::ID = 0;
+
+// Automatically enable the pass.
+// http://adriansampson.net/blog/clangpass.html
+static void registerSkeletonPass(const PassManagerBuilder &,
+                         legacy::PassManagerBase &PM) {
+  PM.add(new SkeletonPass());
+}
+static RegisterStandardPasses
+  RegisterMyPass(PassManagerBuilder::EP_EarlyAsPossible,
+                 registerSkeletonPass);
