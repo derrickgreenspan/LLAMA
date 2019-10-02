@@ -1,3 +1,8 @@
+/* Copyright (C) 2018, Derrick Greenspan and 		*
+ * the University of Central Florida 			*
+ * Licensed under the terms of the MIT License. 	*
+ * Please see the LICENSE file for more information 	*/
+
 #define malloc(x) _internal_malloc(x)
 //#define fputc(x, y) _fputc(x, y)
 #define calloc(x, y) _internal_calloc(x, y)
