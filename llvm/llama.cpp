@@ -1,5 +1,5 @@
 /*  Author: Derrick Greenspan */
-/*  (C) 2018  All rights Reserved */
+/*  (C) 2018 - Licensed under the MIT License */
 /*  Skeleton Author: Adrian Sampson */
 /*  Portions (C) 2015 */
 
