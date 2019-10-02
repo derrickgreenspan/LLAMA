@@ -35,3 +35,24 @@ How to run and reproduce results:
 
 	Note that some benchmarks might take more than an hour to complete. 
 
+
+
+Abstract: 
+There is an expectation among experts that the memory hierarchy
+will be expanded to provide support for multi-level memory,
+enabling the use of new memory technologies living side-by-side
+with traditional DRAM. In doing so, the advantages of traditional
+DRAM can be retained alongside the advantages of these new memory
+technologies. However, in order to be effective, memory must be 
+allocated to different memory levels, either manually by the programmer,
+or automatically.
+
+This paper introduces a novel process which combines a custom
+LLVM Pass with a custom C library to automatically handle
+memory allocations performed by function calls without the need
+for programmer input or hardware/OS level changes. When utilizing
+a simulated multi-level memory architecture with dual non-
+volatile RAM and volatile DRAM, the results demonstrate that such
+a program can alleviate the burden on the programmer while still
+maintaining the performance advantages of DRAM and the higher
+density of non-volatile memory technology.
