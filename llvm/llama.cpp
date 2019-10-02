@@ -1,7 +1,11 @@
-/*  Author: Derrick Greenspan */
-/*  (C) 2018 - Licensed under the MIT License */
-/*  Skeleton Author: Adrian Sampson */
-/*  Portions (C) 2015 */
+/* Copyright (C) 2018, Derrick Greenspan and 		*
+ * the University of Central Florida 			*
+ * Licensed under the terms of the MIT License. 	*
+ * Please see the LICENSE file for more information 	 */
+
+/*  Skeleton Author: Adrian Sampson 			*
+ * Portions (C) 2015 and Licensed under the MIT License */
+
 
 #include "llvm/Pass.h"
 #include "llvm/IR/Function.h"
