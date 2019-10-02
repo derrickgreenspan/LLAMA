@@ -27,7 +27,7 @@ How to build:
 How to run and reproduce results: 
 	Note: The ariel element requires Intel PIN 2.14, which is incompatible with newer kernels. If, in running the benchmarks,
 	it crashes, try adding the "-ifeellucky" flag to the SST script.
-	Also note that the "-ifeellucky" flag may not save you in some cases -- both XSBench and SimpleMOC-Kernel segfaulted (signal 11) 
+	Also note that the "-ifeellucky" flag may not save you in some cases -- both XSBench and SimpleMOC-Kernel raised signal 11 
 	when the flag was thrown, but did not segfault on a system with the proper earlier kernel.
 
 
