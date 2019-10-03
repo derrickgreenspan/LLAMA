@@ -8,7 +8,7 @@ RMDIR = rmdir
 
 CC = clang
 GCC_CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -lnuma
 DEPS = intercept.h llamalib.h 
 
 SOURCE_1 = llama.c
@@ -26,7 +26,7 @@ clang: srcs/${SOURCES} clean
 	@ar cq ${INSTALL}/llama.a ${INSTALL}/*.o 
 
 gcc: srcs/${SOURCES}
-	${GCC_CC} -c srcs/${SOURCES} -o ${INSTALL}/${TARGET}
+	${GCC_CC} -lnuma -c srcs/${SOURCES} -o ${INSTALL}/${TARGET}
 
 clean:
 	@$(RM) $(INSTALL)/*

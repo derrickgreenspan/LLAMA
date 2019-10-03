@@ -6,31 +6,26 @@
 /*  Skeleton Author: Adrian Sampson 			*
  * Portions (C) 2015 and Licensed under the MIT License */
 
-
-#include "llvm/Pass.h"
-#include "llvm/IR/Function.h"
-#include "llvm/IR/Value.h"
-#include "llvm-c/Core.h" 
-#include "llvm/PassSupport.h"
-#include "llvm/Transforms/Scalar/LoopRotation.h"
-#include "llvm/Transforms/Scalar.h"
-#include "llvm/Transforms/Scalar/LoopPassManager.h"
-#include "llvm/Transforms/Utils/LoopUtils.h"
-#include "llvm/Support/raw_ostream.h"
- #include "llvm/Transforms/Scalar/LoopUnrollPass.h"
-#include "llvm/IR/LegacyPassManager.h"
-#include "llvm/Transforms/IPO/PassManagerBuilder.h"
-#include "llvm/IR/Module.h"
-#include "llvm/IR/IRBuilder.h"
-#include "llvm/IR/InstrTypes.h"
-#include "llvm/Transforms/Utils/BasicBlockUtils.h"
-#include "llvm/Analysis/MemoryLocation.h"
-#include "clang/Lex/Pragma.h"
-#include "clang/Lex/Preprocessor.h"
-#include "llvm/Analysis/LoopInfo.h"
-#include "llvm/Transforms/Scalar/IndVarSimplify.h"
-
-
+#include <llvm/Pass.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Value.h>
+#include <llvm-c/Core.h> 
+#include <llvm/PassSupport.h>
+#include <llvm/Transforms/Scalar/LoopRotation.h>
+#include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Scalar/LoopPassManager.h>
+#include <llvm/Transforms/Utils/LoopUtils.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Transforms/Scalar/LoopUnrollPass.h>
+#include <llvm/IR/LegacyPassManager.h>
+#include <llvm/Transforms/IPO/PassManagerBuilder.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/InstrTypes.h>
+#include <llvm/Transforms/Utils/BasicBlockUtils.h>
+#include <llvm/Analysis/MemoryLocation.h>
+#include <llvm/Analysis/LoopInfo.h>
+#include <llvm/Transforms/Scalar/IndVarSimplify.h>
 
 using namespace llvm;
 
@@ -42,6 +37,7 @@ namespace {
 		Value *memValue;
 		int uses = 0;
 		bool visited = false;
+    int id;
 		IRBuilderBase::InsertPoint IP;
 		Instruction *declaredOp;
 
@@ -59,6 +55,7 @@ namespace {
 		retFunc[iterator].func = func; 
 		retFunc[iterator].declaredOp = declaredOp;
 		retFunc[iterator].uses = 0;
+    retFunc[iterator].id = iterator;
 		iterator++;
 		return retFunc;
 	}
@@ -111,7 +108,6 @@ namespace {
 
 
     virtual bool runOnFunction(llvm::Function &F) {
-	   
 	    LoopInfo &LI = getAnalysis<LoopInfoWrapperPass>().getLoopInfo();
 	    
 	    LLVMContext &context = F.getContext();
@@ -193,15 +189,17 @@ namespace {
       	for(i=0; i < iterator; i++)
 	{
 
+    fprintf(stderr, "Site: %d\n", values[i].id);
 		IRBuilder<> builder(theOp);
 		builder.SetInsertPoint(values[i].declaredOp);
-		std::vector<Type*> paramTypes = {Type::getInt32Ty(context)};
+		std::vector<Type*> paramTypes = {Type::getInt64Ty(context), Type::getInt32Ty(context)};
 		Type *retType = Type::getVoidTy(context);
 		FunctionType *LLVMScoreType = FunctionType::get(retType, paramTypes, false);
 		Constant *LLVMScoreFunc = F.getParent()->getOrInsertFunction("setLLVMScore",  LLVMScoreType);
-		Value *args_LLVMScore[] = {ConstantInt::get(Type::getInt32Ty(context), values[i].uses)};
+		Value *args_LLVMScore[] = {ConstantInt::get(Type::getInt64Ty(context), values[i].uses),
+                               ConstantInt::get(Type::getInt32Ty(context), i)};
 		builder.CreateCall(LLVMScoreFunc, args_LLVMScore);
-	}
+      }
 	iterator = 0;
       	free(values);
 	values = (funcValue *) calloc(sizeof(funcValue), 1);

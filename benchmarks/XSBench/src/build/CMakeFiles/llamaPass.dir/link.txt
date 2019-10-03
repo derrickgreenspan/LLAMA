@@ -1,1 +1,0 @@
-/apps/gcc/gcc-7.1.0/bin/g++  -fPIC -I/apps/clang/clang-4.0.1/include  -shared  -o libllamaPass.so CMakeFiles/llamaPass.dir/llama.o 
