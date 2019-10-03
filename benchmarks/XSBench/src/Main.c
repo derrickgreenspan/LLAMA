@@ -14,7 +14,6 @@ int main( int argc, char* argv[] )
 	double omp_start, omp_end;
 	unsigned long long vhash = 0;
 	int nprocs = 1;
-	ariel_enable();
 
 	#ifdef MPI
 	MPI_Status stat;

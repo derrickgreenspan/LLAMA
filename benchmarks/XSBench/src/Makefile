@@ -22,9 +22,9 @@ program = XSBench
 source = \
 Main.c \
 io.c \
-Simulation.c \
 CalculateXS.c \
 GridInit.c \
+Simulation.c \
 XSutils.c \
 Materials.c
 
@@ -35,10 +35,10 @@ obj = $(source:.c=.o)
 #===============================================================================
 
 # Standard Flags
-CFLAGS := -std=gnu99 -Wall
+CFLAGS := -std=gnu99 -Wall -g
 
 # Linker Flags
-LDFLAGS = -lm
+LDFLAGS = -lm -lnuma
 
 # Regular gcc Compiler
 ifeq ($(COMPILER),gnu)
@@ -71,7 +71,7 @@ endif
 
 # Optimization Flags
 ifeq ($(OPTIMIZE),yes)
-  CFLAGS += -O3
+  CFLAGS += -O0
 endif
 
 # Compiler Vectorization (needs -O3 flag) information
@@ -117,17 +117,10 @@ endif
 
 # 0.a  100000.a  10000.a  1000.a  100.a  10.a  20000.a  30000.a  40000.a
 $(program): $(obj) XSbench_header.h Makefile 
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 0XSBench $(LDFLAGS) library/0.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 10XSBench $(LDFLAGS) library/10.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 100XSBench $(LDFLAGS) library/100.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 1000XSBench $(LDFLAGS) library/1000.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 10000XSBench $(LDFLAGS) library/10000.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 20000XSBench $(LDFLAGS) library/20000.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 30000XSBench $(LDFLAGS) library/30000.a
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) $(obj) -o 40000XSBench $(LDFLAGS) library/40000.a
+	        LD_PRELOAD="../../../build/libllvm_bug_fix.so" clang -Xclang -load -Xclang ../../../build/libllamaPass.so $(CFLAGS) $(obj) -o XSBench $(LDFLAGS) ../../../library/build/llama.a
 
 %.o: %.c
-	        clang -Xclang -load -Xclang build/libllamaPass.so $(CFLAGS) -c $< -o $@ 
+	        LD_PRELOAD="../../../build/libllvm_bug_fix.so" clang -I../../../library/ -Xclang -load -Xclang ../../../build/libllamaPass.so $(CFLAGS) -c $< -o $@ 
 
 clean:
 	rm -rf $(program) $(obj)

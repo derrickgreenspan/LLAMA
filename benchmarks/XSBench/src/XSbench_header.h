@@ -11,8 +11,8 @@
 #include<unistd.h>
 #include<sys/time.h>
 #include<assert.h>
+#include <llama.h>
 
-#include "library/llama.h"
 // Papi Header
 #ifdef PAPI
 #include "papi.h"

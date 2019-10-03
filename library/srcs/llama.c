@@ -13,9 +13,18 @@
 #include <errno.h>
 
 long long int timesCalled = 0;
-int threshold = THRESHOLD;
+int threshold = 0;
 int size_ratio = SIZERATIO;
 
+__attribute__((constructor))
+  void llama_init() {
+  char *env;
+
+  env = getenv("LLAMA_THRESHOLD");
+  if(env) {
+    threshold = strtoul(env, NULL, 0);
+  }
+}
 
 void *precalloc(void *ptr, size_t size, int level)
 {
@@ -56,7 +65,7 @@ void * _internal_calloc(size_t nitems, size_t size)
 {
 	int level = _which_level(size * nitems, threshold);
 	void *return_ptr = mlm_malloc(size*nitems, level);
-	return_ptr = memset(return_ptr, 0, size);
+	return_ptr = memset(return_ptr, 0, size*nitems);
 	return return_ptr;
 
 }
@@ -86,10 +95,10 @@ void _internal_free(void *ptr)
 size_t _score(size_t data_size)
 {
 	int localLLVMScore = LLVMScore;
-	int score, dataratio;
-	dataratio = data_size/localLLVMScore;
-	fprintf(stderr, "Data size: %d, LLVM Score: %d\n", data_size, localLLVMScore);
-	score = dataratio * size_ratio;
+	int score;
+
+  score = data_size / localLLVMScore;
+
 	return(score);
 }
 void *_internal_malloc(size_t size)
@@ -102,8 +111,7 @@ int _which_level(size_t data_size, size_t threshold)
 
 		size_t score = _score(data_size);
 	#if POOLBEHAVIOR == AUTOMATIC 
-		char level;
-		fprintf(stderr, "Threshold is %d, score is %d\n", threshold, score);
+		int level;
 		if(score >= threshold)
 		{
 			level = DRAMPOOL;
@@ -112,6 +120,7 @@ int _which_level(size_t data_size, size_t threshold)
 		{
 			level = NVMPOOL;	
 		}
+    fprintf(stderr, "ID: %d\n  Score: %d\n  LLVM score: %d\n  Size: %d\n  Level: %d\n", ID, score, LLVMScore, data_size, level);
 
 		return level;
 
@@ -135,11 +144,11 @@ void _setSizeRatio(float thisSizeRatio)
  * 				End Internal Functions					*
  ****************************************************************************************/
 
-void setLLVMScore(int thisScore)
+void setLLVMScore(int thisScore, int id)
 {
 	/*  Set the number of times this function will be called */
 	LLVMScore = thisScore;
-//	printf("Score: %d\n", timesCalled);
+  ID = id;
 	return;
 }
 

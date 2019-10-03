@@ -1,3 +1,7 @@
 Please note:
-	I do not own the licenses for XSBENCH and SimpleMOC_Kernel, however, they are works of the US Federal Government and licensed under the terms of the MIT License. Such licenses are provided for their sources.
-	My benchmarks, simple_mem and dynamic_memory matrices, are both licensed under the more restrictive GNU GPL. However, the rest of my work, including the Library, are licensed under the MIT license. 
+  I do not own the licenses for XSBENCH and SimpleMOC_Kernel, however, they are
+works of the US Federal Government and licensed under the terms of the MIT
+License. Such licenses are provided for their sources.  My benchmarks,
+simple_mem and dynamic_memory matrices, are both licensed under the more
+restrictive GNU GPL. However, the rest of my work, including the Library, are
+licensed under the MIT license. 

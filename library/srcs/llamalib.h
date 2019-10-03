@@ -14,11 +14,9 @@
 #define SIZERATIO 1
 
 #define AUTOMATIC -1
-#define DRAMPOOL 0
-#define NVMPOOL 1
+#define DRAMPOOL 1
+#define NVMPOOL 3
 #define POOLBEHAVIOR AUTOMATIC
-//#define POOLBEHAVIOR DRAMPOOL
-//#define POOLBEHAVIOR AUTOMATIC
 /*If DRAMPOOL, always write to DRAMPOOL, if NVMPOOL, always write to NVMPOOL */
 
 
@@ -26,9 +24,10 @@
  *  to label the files the persistent variables are mapped to */
 int loop_counter;
 long long int LLVMScore;
+int ID;
 
 void pmfree(void *ptr, size_t size);
-void setLLVMScore(int thisScore);
+void setLLVMScore(int thisScore, int id);
 int _fprintf(FILE *stream, const char *format);
 int _fputc(int character, FILE *stream);
 void *_internal_malloc(size_t size);
