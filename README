@@ -3,6 +3,8 @@ Email: Derrick.Greenspan(at)knights.ucf.edu
 
 https://doi.org/10.1145/3357526.3357534
 
+Please see LLAMA.pdf for the corresponding research paper. 
+
 How to build:
 	Prerequisites:
 	The LLVM pass is built with clang 4.0 and gcc 7.1.0
@@ -56,5 +58,3 @@ volatile RAM and volatile DRAM, the results demonstrate that such
 a program can alleviate the burden on the programmer while still
 maintaining the performance advantages of DRAM and the higher
 density of non-volatile memory technology.
-
-![LLAMA.pdf](https://github.com/derrickgreenspan/LLAMA/blob/master/LLAMA.pdf)
