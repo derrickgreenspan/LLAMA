@@ -3,8 +3,7 @@ Email: Derrick.Greenspan(at)knights.ucf.edu
 
 https://doi.org/10.1145/3357526.3357534
 
-You can read the paper introducing LLAMA here: https://github.com/derrickgreenspan/LLAMA/blob/master/llama.pdf
-
+You can read the paper introducing LLAMA here: https://github.com/derrickgreenspan/LLAMA/raw/master/llama.pdf
 How to build:
 	Prerequisites:
 	The LLVM pass is built with clang 4.0 and gcc 7.1.0
